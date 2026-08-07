@@ -125,3 +125,85 @@ i.e. the player's guaranteed starting farmland.
 - At the default `1` the generated layout is identical to before — no need to regenerate
   unless you change the value.
 - Test count is now **23**.
+
+---
+
+## Feature 2 — Player Movement & Camera
+
+The code drives every position and size from `GameConfig` (`SpriteFitter` again), so as with
+tiles: never hand-set positions or scales on the sprites — only what's listed below.
+
+### 1. Data assets → `Data/`
+
+**GameConfig** — two new sections appeared with correct defaults. Just verify:
+
+| Field | Value |
+| --- | --- |
+| Walk Speed Tiles Per Second | 2 |
+| Player Size | (0.6, 1) |
+| Camera Ortho Size | 2.5 |
+| Camera Smooth Time | 0.15 |
+| Camera Vertical Offset | 1 |
+
+**TileVisuals** — new *Highlight* section:
+
+| Field | Value |
+| --- | --- |
+| Highlight Sprite | `Square` |
+| Highlight Color | `FFE97F`, **alpha ≈ 90** |
+
+### 2. Input asset — nothing to do, just check
+
+Select `Assets/InputSystem_Actions` and open it: the **Player** map now has only **Move**
+(A/D, arrows, stick, d-pad) and **Action** (S, ↓, gamepad South). The **UI** map is untouched.
+Don't edit anything.
+
+### 3. `Player` prefab → `Prefabs/`
+
+Build in the scene, drag to `Prefabs/`, **keep the instance in the scene**:
+
+```
+Player                   ← empty GameObject + PlayerController
+└── Sprite               ← SpriteRenderer, sprite = Square, color F2E9DC, Sorting Order = 20
+```
+
+Wire on `PlayerController`:
+
+| Field | Value |
+| --- | --- |
+| World View | *leave empty in the prefab* (wired per scene) |
+| Config | `GameConfig` |
+| Sprite | the `Sprite` child |
+| Move Action | expand `Assets/InputSystem_Actions` in the Project window (arrow on the asset) → drag **Player/Move** |
+| Tile Action | same → drag **Player/Action** |
+
+### 4. Scene changes (`Game.unity`)
+
+1. On the **Player instance**: set **World View** = the scene's `World` object. (Root position
+   doesn't matter — code snaps it every frame.)
+2. New empty GameObject `TileHighlight` at the scene root:
+   - Add `SpriteRenderer`: leave the sprite **empty** (code assigns it), **Sorting Order = 12**.
+   - Add `TileHighlightView` and wire: Player = `Player` instance · World View = `World` ·
+     Visuals = `TileVisuals` · Config = `GameConfig` · Marker = its own SpriteRenderer.
+3. `Main Camera`: add the `CameraRig` component and wire: Player = `Player` instance ·
+   World View = `World` · Config = `GameConfig` · Camera = its own Camera component.
+   Leave position/size as they are — the rig drives them in Play Mode.
+
+No prefab for `TileHighlight` or the camera: they only reference scene objects, so a prefab
+buys nothing. Save the scene.
+
+### 5. Verify (Play Mode)
+
+- The player stands upright on the House tile (top), surface across the lower third of the
+  screen, sky above.
+- Hold **D / → / stick right**: the player walks right and the planet rotates underneath;
+  the camera follows with a slight ease. **A / ←** mirrors. Do a full lap in each direction —
+  no hitch when crossing the bottom of the planet (the 0°/360° seam).
+- The warm highlight sits under the player and hops tile by tile.
+- Press **S / ↓ / gamepad South**: the Console logs the tile index and the tile toggles its
+  purple corruption overlay (temporary debug action, removed when planting arrives).
+- Gamepad: half-deflecting the stick still walks at full speed (constant-speed rule).
+
+### 6. Tests
+
+Test Runner → EditMode → Run All → **37 green**.
