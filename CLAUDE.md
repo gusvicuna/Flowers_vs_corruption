@@ -1,0 +1,93 @@
+# Flowers vs Corruption — Project Instructions
+
+Game jam project for **Farm Jam 2026: Summer Madness** (Jul 15 – Aug 15 2026).
+Read the full design in [GDD — Farm Jam 2026_ Summer Madness.md](<GDD — Farm Jam 2026_ Summer Madness.md>) — it is the source of truth for scope. **If a feature is not in the Must-Have column, do not build it unless explicitly asked.**
+
+## The game in one paragraph
+
+2D side-view tiny round planet. The player (last human alive) walks around the circumference (gravity points to the planet center). The world is divided into ~24 arc-segment tiles: the player's house on one side, the corruption base on the opposite side. Every night the corruption spreads tile by tile toward the house; every day the player farms magical flowers that push it back. Survive hunger by eating harvested crops. Win when all corruption is cleansed; lose when health hits 0 or the house is corrupted.
+
+## Design decisions (clarified with the team — these override ambiguity in the GDD)
+
+- **World**: 2D side-view circular planet, ~24 tiles around the circumference (must be trivially tunable). House at one pole, corruption base at the opposite pole, so corruption advances on two fronts.
+- **Movement**: continuous tangential walking (Left/Right). The tile under the player is highlighted; Action (Down) applies to that tile. Not tile-by-tile stepping.
+- **Cycle**: 2 minutes total — **90 s day / 30 s night** (tunable).
+- **Night**: corruption spreads to adjacent tiles; the player's job is to *avoid hazards* (no combat in Must-Have). Hunger ticks down at night.
+- **Dawn sequence**: weather for the new day is rolled and shown → grown flowers cleanse adjacent corrupted tile(s) → surviving crops grow +1 level.
+- **Flowers**: a fully-grown flower cleanses adjacent corrupted tiles at dawn, and corruption cannot spread into a tile guarded by a living flower.
+- **Weather** (one state per day, random, telegraphed at dawn): Rain waters all crops · Sun charges sunflowers · Cloudy does nothing.
+- **Health** (the only stat that kills you): drains from standing on corrupted tiles, from eating corrupted crops, and slowly while hunger is at 0.
+- **Hunger**: refilled by *manually* eating a crop from the inventory (deliberate choice: eat vs replant/use).
+- **Corrupted crops**: give more food but damage health and make corruption spread more (Mutated Crops jam mechanic).
+- **Lose**: health reaches 0, OR the house tile is corrupted. **Win**: every tile cleansed.
+- **Screens**: Start, Pause, Game Over/Win.
+
+## Tech stack
+
+- **Unity 6000.5.0f1**, URP (2D renderer), **pixel art** via the Aseprite importer.
+- **New Input System** (`InputSystem_Actions.inputactions` at Assets root) — never `Input.GetKey`.
+- Keyboard + gamepad. PC target.
+- Test Framework is installed — plain-C# game logic should be unit-testable (EditMode tests).
+
+## Architecture rules
+
+Pragmatic jam architecture: SOLID and clean separation where it pays off, zero ceremony where it doesn't. No DI containers, no third-party frameworks.
+
+1. **Tunables live in ScriptableObjects**, never hardcoded. One `GameConfig` (tile count, day/night durations, hunger/health rates, spread rates…) plus per-content definitions (`CropDefinition`, `WeatherDefinition`…). Designers must be able to rebalance without touching code.
+2. **Simulation vs presentation**: game rules (corruption spread, crop growth, hunger/health math, win/lose checks) go in plain C# classes with no UnityEngine scene dependencies so they are unit-testable. MonoBehaviours are thin adapters that own lifecycles, input, and visuals ("humble object").
+3. **Decouple with events**: systems communicate through C# events raised by a small number of owners (e.g. `TimeSystem.DawnStarted`, `CorruptionSystem.TileCorrupted`). UI and audio only *listen*. No system reaches into another's internals; no `FindObjectOfType` in gameplay code.
+4. **State machine for game flow**: Day/Night phases and Start/Playing/Paused/GameOver as explicit states, not scattered booleans.
+5. **The tile ring is the central model**: a single `WorldGrid` (plain C#) owns the ordered list of tiles and their state (ground type, occupant crop, corruption). Everything queries/mutates through it — no per-tile MonoBehaviours holding authoritative state.
+6. **Composition over inheritance** for crops/tiles: behavior differences come from data (`CropDefinition` flags/curves), not subclass trees.
+7. Follow the four OOP pillars and SOLID, but **jam rule: three strikes then refactor** — don't build abstractions for a second use that may never come.
+
+## Project layout
+
+All our assets live under `Assets/_Project/` (keeps them separated and sorted above package junk):
+
+```
+Assets/_Project/
+  Art/            (sprites, aseprite files, palettes)
+  Audio/          (music, sfx)
+  Data/           (ScriptableObject assets: GameConfig, crop defs…)
+  Prefabs/
+  Scenes/
+  Scripts/
+    Core/         (time system, game state machine, event plumbing)
+    World/        (WorldGrid, tiles, corruption)
+    Farming/      (crops, planting, watering, weather)
+    Player/       (movement, input adapter, health/hunger)
+    Inventory/
+    UI/
+    Audio/
+  Tests/          (EditMode tests for the plain-C# simulation)
+```
+
+- Root namespace: `FlowersVsCorruption`, sub-namespaces mirror the script folders (`FlowersVsCorruption.World`, …).
+- One asmdef for `Scripts` (`FlowersVsCorruption.asmdef`) + one for `Tests` — keeps compile times fast and tests isolated.
+
+## C# conventions
+
+- PascalCase for types/methods/properties, camelCase for locals/parameters, `_camelCase` for private fields.
+- `[SerializeField] private` over public fields.
+- Events named as past/ongoing facts: `DawnStarted`, `TileCorrupted`.
+- Comments only for non-obvious constraints; the code should read on its own.
+
+## Team & workflow
+
+| Area | Owner |
+| --- | --- |
+| Engineering/systems, sound & music | Gus |
+| Gameplay programming | Janhavi |
+| Art direction & assets | Irene |
+
+- **Git**: both devs commit **directly to `dev`** (no PRs during the jam); `main` holds releasable builds. Always `git pull --rebase` before pushing.
+- **Unity merge-conflict prevention** (critical with two devs and no PRs): only one person edits a given scene at a time; build content as prefabs and add them to the scene once; keep scenes thin. Asset Serialization is Force Text (default).
+- Commit messages: `feat|fix|chore(scope): message` (see git log).
+
+## Jam guardrails
+
+- Must-Haves playable start-to-finish **well before the final week** — bias every decision toward shippable.
+- The design mantra arbitrates disputes: *"A farming sim where you have to fight corruption to survive and revive a round world by planting and harvesting crops."*
+- Design pillars: the player should **feel like a nature hero** by day and **progressive fear** by night.
+- Art/sound requests to teammates must be explicit scoped lists (exact sprites/animations, exact SFX), never "a farm".

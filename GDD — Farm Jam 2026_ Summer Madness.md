@@ -51,17 +51,20 @@ The 30–90 second cycle the player repeats throughout the game. If this isn't c
 
 **Our loop:**
 
-1. Day:  
-   1. Corruption is pushed back  
-   2. Harvest Blessed or Surviving Crops  
-   3. Plant  
-   4. Water  
-   5. Gather Resources  
-2. Night:  
-   1. Corruption Spreads  
-   2. Explore/Defend   
-   3. Use Harvest to Restore the World  
-   4. Hunger goes down
+1. Dawn (transition):  
+   1. Today's weather is rolled and shown  
+   2. Fully-grown flowers cleanse adjacent corrupted tile(s)  
+   3. Surviving crops grow \+1 level  
+2. Day (90 s):  
+   1. Harvest Blessed or Surviving Crops  
+   2. Plant  
+   3. Water  
+   4. Gather Resources  
+   5. Eat from inventory to refill hunger (manual, deliberate choice: eat vs replant)  
+3. Night (30 s):  
+   1. Corruption Spreads to adjacent tiles (cannot enter tiles guarded by a living flower)  
+   2. Avoid hazards (corrupted ground damages the player on contact — no combat in Must-Have)  
+   3. Hunger goes down
 
 ## **5\. Features**
 
@@ -69,16 +72,16 @@ Sort into three columns from day one. This replaces a backlog: everything is bor
 
 | Must-Have (no game without it) | Nice-to-Have (if time allows) | Cut (consciously dropped)   |
 | :---- | :---- | :---- |
-| A round world with different types of grounds separated in tiles. On one side the players house, on the other side the corruption base. | River tiles |  |
-| Player Input (movement tangential to the surface of the world and action) | Tools system |  |
-| Health system | Fighting corruption |  |
+| A round world with different types of grounds separated in tiles. On one side the players house, on the other side the corruption base. 2D side-view tiny planet: the player walks around the circumference (gravity points to the center), tiles are arc segments of the ring. \~24 tiles to start — tile count must be trivially tunable for prototyping. House at one pole, corruption base at the opposite pole (corruption advances on two fronts). | River tiles |  |
+| Player Input (movement tangential to the surface of the world and action). Continuous walking (not tile-by-tile); the tile under the player is highlighted and Action applies to it. | Tools system |  |
+| Health system. The only stat that kills you. Drains from: standing on corrupted tiles, eating corrupted crops, and slowly while hunger is at 0\. | Fighting corruption |  |
 | Day/Night time system |  |  |
 | Inventory system |  |  |
-| Corruption system |  |  |
-| Planting system |  |  |
+| Corruption system. Spreads to adjacent tiles at night; cannot spread into a tile guarded by a living flower; pushed back by grown flowers at dawn. |  |  |
+| Planting system. A fully-grown flower cleanses its adjacent corrupted tile(s) at dawn. |  |  |
 | Corrupted crops |  |  |
 | Dynamic weather system |  |  |
-| Hunger system |  |  |
+| Hunger system. Refilled by manually eating a crop from the inventory. At 0 it does not kill — it slowly drains health instead. |  |  |
 
 Jam rule: **Must-Haves should be playable start to finish well before the final week.** Everything else is a bonus.
 
@@ -97,7 +100,7 @@ Jam rule: **Must-Haves should be playable start to finish well before the final 
 
 > * **Visual references (links/images):** 
 > * **Color palette:** 
-> * **Style:** pixel art / low poly / vector / hand-drawn / etc.  
+> * **Style:** **Pixel art** (Aseprite workflow — the project uses Unity's Aseprite importer)  
 > * **Art scope constraint:** (e.g. max 1 character, 3 terrain tiles, 2 animals) 
 > * **Notes on asset scope:** keep the asset list short and explicit (list exact sprites/animations needed, not "a farm"). Favor reusable/modular pieces (tileable ground, one rig reused for multiple crops) over one-off hero assets.
 
@@ -118,11 +121,13 @@ Jam rule: **Must-Haves should be playable start to finish well before the final 
 ### **Day/Night**
 
 > * What exactly changes?  
-  * At Night corrupted ground expand to adjacent tiles  
-  * At Day surviving crops grow 1 level  
+  * At Night corrupted ground expand to adjacent tiles (blocked by tiles guarded by a living flower)  
+  * At Dawn: weather is rolled and shown → grown flowers cleanse adjacent corrupted tiles → surviving crops grow 1 level  
+  * At Night hunger goes down; corrupted ground damages the player on contact  
 > * How long is one cycle in real time?  
-  * 2 minutes  
-> * Is it reversible, or is there pressure (e.g. crops dying if not harvested in time)?
+  * 2 minutes: **90 s day / 30 s night** (durations tunable for prototyping)  
+> * Is it reversible, or is there pressure (e.g. crops dying if not harvested in time)?  
+  * Corruption is reversible tile by tile (flower cleanse at dawn); the pressure is the nightly spread toward the house on two fronts
 
 ### **Mechanics chosen from the official list (if not using the secret theme)**
 
@@ -130,6 +135,7 @@ Jam rule: **Must-Haves should be playable start to finish well before the final 
 
 How it connects to the core loop:
 
+> * One weather state per day, rolled at random and telegraphed at dawn so the player can plan  
 > * Rain: waters all crops automatically  
 > * Sun: charges sunflowers (protecting and pusher crops)  
 > * Cloudy: nothing
@@ -138,7 +144,8 @@ How it connects to the core loop:
 
 How it connects to the core loop:
 
-> * Corrupted crops give more food but expands the corruption more
+> * Corrupted crops give more food but expands the corruption more  
+> * Eating a corrupted crop also damages the player's health (risk/reward)
 
 ## **10\. Win / Lose Conditions (if applicable)**
 
@@ -146,8 +153,8 @@ How it connects to the core loop:
   * All corruption is destroyed  
 > * **Lose when:**   
   * Your house has been corrupted  
-  * Your hunger goes to 0  
-  * Your life goes to 0
+  * Your life goes to 0  
+> * Note: hunger at 0 is **not** a direct lose condition — it slowly drains health instead (health is the only stat that kills you)
 
 ## **11\. Platform & Audience**
 
