@@ -13,6 +13,8 @@ Read the full design in [GDD — Farm Jam 2026_ Summer Madness.md](<GDD — Farm
 - **Movement**: continuous tangential walking (Left/Right). The tile under the player is highlighted; Action (Down) applies to that tile. Not tile-by-tile stepping.
 - **Cycle**: 2 minutes total — **90 s day / 30 s night** (tunable).
 - **Night**: corruption spreads to adjacent tiles; the player's job is to *avoid hazards* (no combat in Must-Have). Hunger ticks down at night.
+- **Starting corruption**: the CorruptionBase tile plus N tiles on each side start corrupted; N is authored on `WorldLayout` (`Initial Corruption Per Side`, default 1).
+- **Starting farmland**: the world generator guarantees N Soil tiles (no rocks) on each side of the house; authored on `WorldLayout` (`Soil Next To House Per Side`, default 1).
 - **Dawn sequence**: weather for the new day is rolled and shown → grown flowers cleanse adjacent corrupted tile(s) → surviving crops grow +1 level.
 - **Flowers**: a fully-grown flower cleanses adjacent corrupted tiles at dawn, and corruption cannot spread into a tile guarded by a living flower.
 - **Weather** (one state per day, random, telegraphed at dawn): Rain waters all crops · Sun charges sunflowers · Cloudy does nothing.
@@ -40,6 +42,16 @@ Pragmatic jam architecture: SOLID and clean separation where it pays off, zero c
 5. **The tile ring is the central model**: a single `WorldGrid` (plain C#) owns the ordered list of tiles and their state (ground type, occupant crop, corruption). Everything queries/mutates through it — no per-tile MonoBehaviours holding authoritative state.
 6. **Composition over inheritance** for crops/tiles: behavior differences come from data (`CropDefinition` flags/curves), not subclass trees.
 7. Follow the four OOP pillars and SOLID, but **jam rule: three strikes then refactor** — don't build abstractions for a second use that may never come.
+
+## Division of work with AI
+
+**AI writes code; Gus does all Unity Editor work by hand.** Never generate editor automation
+scripts (`[MenuItem]` setup tools) to create assets, prefabs, or scenes. Instead, append precise
+step-by-step instructions to [Docs/Unity-Manual-Setup.md](Docs/Unity-Manual-Setup.md) — one section
+per feature — covering exactly which assets to create, where, and which fields to wire.
+
+Corollary: keep code independent of hand-authored values where cheap. Example: `SpriteFitter`
+scales sprites to the size in `GameConfig`, so nobody has to match pixels-per-unit by hand.
 
 ## Project layout
 
