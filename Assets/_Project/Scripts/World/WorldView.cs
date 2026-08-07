@@ -43,11 +43,10 @@ namespace FlowersVsCorruption.World
             for (int i = 0; i < Grid.TileCount; i++)
             {
                 float angle = Grid.AngleOf(i);
-                float radians = angle * Mathf.Deg2Rad;
 
                 TileView view = Instantiate(_tilePrefab, transform);
-                view.transform.localPosition = new Vector3(Mathf.Cos(radians), Mathf.Sin(radians), 0f) * radius;
-                view.transform.localRotation = Quaternion.Euler(0f, 0f, angle - 90f);
+                view.transform.localPosition = RingGeometry.PositionAt(angle, radius);
+                view.transform.localRotation = RingGeometry.RotationAt(angle);
                 view.Init(i, Grid.GetTile(i).Type, _visuals, tileWidth, _config.TileHeight);
                 view.Refresh(Grid.GetTile(i));   // pick up state set before we subscribed (initial corruption)
                 _tileViews[i] = view;
