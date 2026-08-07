@@ -95,6 +95,7 @@ Assets/_Project/
 
 - **Git**: both devs commit **directly to `dev`** (no PRs during the jam); `main` holds releasable builds. Always `git pull --rebase` before pushing.
 - **Unity merge-conflict prevention** (critical with two devs and no PRs): only one person edits a given scene at a time; build content as prefabs and add them to the scene once; keep scenes thin. Asset Serialization is Force Text (default).
+- **One-time git setup per clone** (line endings + Unity SmartMerge): [Docs/Git-Setup.md](Docs/Git-Setup.md).
 - Commit messages: `feat|fix|chore(scope): message` (see git log).
 
 ## Jam guardrails

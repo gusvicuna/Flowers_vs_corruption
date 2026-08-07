@@ -1,0 +1,90 @@
+# Normalize everything to LF inside the repository; check out native line
+# endings. Keeps diffs clean when devs work on different operating systems.
+* text=auto
+
+## Code & text
+*.cs        text diff=csharp
+*.asmdef    text
+*.asmref    text
+*.json      text
+*.md        text
+*.txt       text
+*.xml       text
+*.yml       text
+*.shader    text
+*.shadergraph text
+*.cginc     text
+*.hlsl      text
+*.uss       text
+*.uxml      text
+*.gitattributes text
+*.gitignore text
+
+## Unity YAML assets
+# Unity writes these with LF, so keep LF in the working tree too — it avoids
+# spurious whole-file diffs and is what UnityYAMLMerge expects.
+# See Docs/Git-Setup.md to enable the merge driver on your machine.
+*.unity             text eol=lf merge=unityyamlmerge
+*.prefab            text eol=lf merge=unityyamlmerge
+*.asset             text eol=lf merge=unityyamlmerge
+*.mat               text eol=lf merge=unityyamlmerge
+*.anim              text eol=lf merge=unityyamlmerge
+*.controller        text eol=lf merge=unityyamlmerge
+*.overrideController text eol=lf merge=unityyamlmerge
+*.physicMaterial    text eol=lf merge=unityyamlmerge
+*.physicsMaterial2D text eol=lf merge=unityyamlmerge
+*.playable          text eol=lf merge=unityyamlmerge
+*.mask              text eol=lf merge=unityyamlmerge
+*.brush             text eol=lf merge=unityyamlmerge
+*.flare             text eol=lf merge=unityyamlmerge
+*.fontsettings      text eol=lf merge=unityyamlmerge
+*.guiskin           text eol=lf merge=unityyamlmerge
+*.giparams          text eol=lf merge=unityyamlmerge
+*.lighting          text eol=lf merge=unityyamlmerge
+*.mixer             text eol=lf merge=unityyamlmerge
+*.terrainlayer      text eol=lf merge=unityyamlmerge
+*.signal            text eol=lf merge=unityyamlmerge
+*.meta              text eol=lf merge=unityyamlmerge
+*.inputactions      text eol=lf
+
+## Binary assets — never diff or line-ending-convert these
+*.png       binary
+*.jpg       binary
+*.jpeg      binary
+*.gif       binary
+*.psd       binary
+*.psb       binary
+*.tga       binary
+*.tif       binary
+*.tiff      binary
+*.bmp       binary
+*.ico       binary
+*.aseprite  binary
+*.ase       binary
+*.exr       binary
+*.hdr       binary
+*.cubemap   binary
+*.wav       binary
+*.mp3       binary
+*.ogg       binary
+*.aif       binary
+*.aiff      binary
+*.flac      binary
+*.fbx       binary
+*.obj       binary
+*.blend     binary
+*.dae       binary
+*.3ds       binary
+*.ttf       binary
+*.otf       binary
+*.mp4       binary
+*.mov       binary
+*.webm      binary
+*.dll       binary
+*.pdb       binary
+*.so        binary
+*.dylib     binary
+*.unitypackage binary
+*.zip       binary
+*.7z        binary
+*.rar       binary
