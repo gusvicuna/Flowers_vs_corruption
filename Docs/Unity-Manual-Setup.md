@@ -207,3 +207,54 @@ buys nothing. Save the scene.
 ### 6. Tests
 
 Test Runner → EditMode → Run All → **37 green**.
+
+---
+
+## Feature 3 — Day/Night Time System
+
+Role flip for this feature: **Gus writes the code and does the editor work**; the AI delivered
+the plan, the pre-written tests (`Tests/DayNightClockTests.cs`), and this checklist. The tests
+are the spec — green means the clock is correct.
+
+### 0. Code order (red → green)
+
+1. Create `Scripts/Core/DayPhase.cs` (enum `Dawn, Day, Night`) and the `DayNightClock` skeleton
+   with the exact API from the plan (bodies `throw new NotImplementedException()`), so the test
+   assembly compiles.
+2. Test Runner: 15 new red, 37 old green.
+3. Implement `DayNightClock` until **52 green**.
+4. Only then write `TimeSystem`, `SkyView`, `TimeDebugHud` (no tests — verified in Play Mode).
+5. asmdef: add `Unity.RenderPipelines.Universal.2D.Runtime` to `Scripts/FlowersVsCorruption.asmdef`
+   references, or `Light2D` in `SkyView` won't compile (CS0246).
+
+### 1. Data — `GameConfig.asset`
+
+New sections appear once the code lands (*Time*: dawn/day/night durations; *Sky*: a sky color
+and a light color per phase, plus **Sky Transition Seconds** — how long the tint takes to ease
+into each phase's palette). Code defaults are sensible; current tuning lives in the asset
+(durations were hand-tuned to 10/80/40 while playtesting).
+
+### 2. Scene changes (`Game.unity`)
+
+New empty GameObject `TimeSystem` at the scene root with three components:
+
+| Component | Field | Value |
+| --- | --- | --- |
+| `TimeSystem` | Config | `GameConfig` |
+| `SkyView` | Time / Camera / Global Light / Config | `TimeSystem` (same GO) / `Main Camera` / `Global Light 2D` (existing scene object) / `GameConfig` |
+| `TimeDebugHud` | Time | `TimeSystem` (same GO) |
+
+Nothing else by hand. Save the scene.
+
+### 3. Verify (Play Mode)
+
+- Starts at **Dawn of day 1**: warm tint for ~3 s → sky lerps to light blue (Day) → after 90 s
+  it darkens (Night) → after 30 s warm again and the HUD reads **Day 2**.
+- HUD (top-left) counts down the current phase; sprites' lighting follows the Global Light tint.
+- Tuning: sky colors and lerp speed apply live in Play Mode (read every frame). Durations are
+  captured when the clock is created — change them and **re-enter Play Mode** (set Day Duration
+  to 10 for fast iteration while testing).
+
+### 4. Tests
+
+Test Runner → EditMode → Run All → **52 green**.

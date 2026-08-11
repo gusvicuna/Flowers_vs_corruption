@@ -11,7 +11,7 @@ Read the full design in [GDD — Farm Jam 2026_ Summer Madness.md](<GDD — Farm
 
 - **World**: 2D side-view circular planet, ~24 tiles around the circumference (must be trivially tunable). House at one pole, corruption base at the opposite pole, so corruption advances on two fronts.
 - **Movement**: continuous tangential walking (Left/Right). The tile under the player is highlighted; Action (Down) applies to that tile. Not tile-by-tile stepping.
-- **Cycle**: 2 minutes total — **90 s day / 30 s night** (tunable).
+- **Cycle**: **Day 90 s → Night 30 s → Dawn 3 s → next Day** (all tunable in `GameConfig`). The game starts at the Dawn of day 1, so the dawn sequence (weather roll, cleanse, growth) runs identically for every day including the first. Contract: corruption spread listens to `NightStarted`; the dawn sequence hangs off `DawnStarted`.
 - **Night**: corruption spreads to adjacent tiles; the player's job is to *avoid hazards* (no combat in Must-Have). Hunger ticks down at night.
 - **Starting corruption**: the CorruptionBase tile plus N tiles on each side start corrupted; N is authored on `WorldLayout` (`Initial Corruption Per Side`, default 1).
 - **Starting farmland**: the world generator guarantees N Soil tiles (no rocks) on each side of the house; authored on `WorldLayout` (`Soil Next To House Per Side`, default 1).

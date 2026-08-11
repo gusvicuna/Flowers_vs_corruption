@@ -125,7 +125,7 @@ Jam rule: **Must-Haves should be playable start to finish well before the final 
   * At Dawn: weather is rolled and shown → grown flowers cleanse adjacent corrupted tiles → surviving crops grow 1 level  
   * At Night hunger goes down; corrupted ground damages the player on contact  
 > * How long is one cycle in real time?  
-  * 2 minutes: **90 s day / 30 s night** (durations tunable for prototyping)  
+  * ~2 minutes: **90 s day / 30 s night / 3 s dawn** — Dawn is a short phase of its own between night and day where the dawn sequence plays out; all durations tunable for prototyping. The game starts at the Dawn of day 1\.  
 > * Is it reversible, or is there pressure (e.g. crops dying if not harvested in time)?  
   * Corruption is reversible tile by tile (flower cleanse at dawn); the pressure is the nightly spread toward the house on two fronts
 
