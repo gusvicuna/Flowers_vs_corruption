@@ -119,6 +119,82 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &2159298
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2159302}
+  - component: {fileID: 2159301}
+  - component: {fileID: 2159300}
+  - component: {fileID: 2159299}
+  m_Layer: 0
+  m_Name: TimeSystem
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &2159299
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2159298}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6142c36f37544ce479269315493d316b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: FlowersVsCorruption::TimeDebugHud
+  _timeSystem: {fileID: 2159301}
+--- !u!114 &2159300
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2159298}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e927e43a5e988184793659d76d778d0c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: FlowersVsCorruption::FlowersVsCorruption.Core.SkyView
+  _config: {fileID: 11400000, guid: 46c689c9dea11c143845b1aebcd0e7fe, type: 2}
+  _timeSystem: {fileID: 2159301}
+  _camera: {fileID: 1118856685}
+  _sunLight: {fileID: 690270370}
+--- !u!114 &2159301
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2159298}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dff54e37b9785724098f5da5b9717712, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: FlowersVsCorruption::FlowersVsCorruption.Core.TimeSystem
+  _config: {fileID: 11400000, guid: 46c689c9dea11c143845b1aebcd0e7fe, type: 2}
+--- !u!4 &2159302
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2159298}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -2.87017, y: 1.5825, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &283174580
 GameObject:
   m_ObjectHideFlags: 0
@@ -314,7 +390,11 @@ MonoBehaviour:
         m_SelectedSource:
           rid: -2
         m_Provider2DCache:
-          rid: -2
+          rid: 9062591819693162568
+    - rid: 9062591819693162568
+      type: {class: 'Provider2DCache`1[[UnityEngine.Rendering.Universal.Light2DProvider, Unity.RenderPipelines.Universal.2D.Runtime]]', ns: UnityEngine.Rendering.Universal, asm: Unity.RenderPipelines.Universal.2D.Runtime}
+      data:
+        m_Cache: []
 --- !u!4 &690270371
 Transform:
   m_ObjectHideFlags: 0
@@ -633,3 +713,4 @@ SceneRoots:
   - {fileID: 1966904905}
   - {fileID: 8114571592054431364}
   - {fileID: 283174583}
+  - {fileID: 2159302}

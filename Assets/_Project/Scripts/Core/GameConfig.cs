@@ -5,6 +5,20 @@ namespace FlowersVsCorruption.Core
     [CreateAssetMenu(menuName = "FvC/Game Config", fileName = "GameConfig")]
     public class GameConfig : ScriptableObject
     {
+        [Header("Time")]
+        [SerializeField, Min(0.1f)] private float _dawnDurationSeconds = 3f;
+        [SerializeField, Min(0.1f)] private float _dayDurationSeconds = 90f;
+        [SerializeField, Min(0.1f)] private float _nightDurationSeconds = 30f;
+
+        [Header("Sky")]
+        [SerializeField] private Color _dawnSkyColor = new Color(1f, 0.7f, 0.5f);
+        [SerializeField] private Color _daySkyColor = new Color(0.5f, 0.8f, 1f);
+        [SerializeField] private Color _nightSkyColor = new Color(0.1f, 0.1f, 0.3f);
+        [SerializeField] private Color _dawnLightColor = new Color(1f, 0.8f, 0.6f);
+        [SerializeField] private Color _dayLightColor = new Color(1f, 1f, 0.9f);
+        [SerializeField] private Color _nightLightColor = new Color(0.2f, 0.2f, 0.5f);
+        [SerializeField, Min(0.1f)] private float _skyTransitionSeconds = 5f;
+
         [Header("World Geometry")]
         [SerializeField, Min(0.01f)] private float _tileWidth = 1f;
         [SerializeField, Min(0.01f)] private float _tileHeight = 0.6f;
@@ -29,6 +43,16 @@ namespace FlowersVsCorruption.Core
         public float CameraOrthoSize => _cameraOrthoSize;
         public float CameraSmoothTime => _cameraSmoothTime;
         public float CameraVerticalOffset => _cameraVerticalOffset;
+        public float DawnDurationSeconds => _dawnDurationSeconds;
+        public float DayDurationSeconds => _dayDurationSeconds;
+        public float NightDurationSeconds => _nightDurationSeconds;
+        public Color DawnSkyColor => _dawnSkyColor;
+        public Color DaySkyColor => _daySkyColor;
+        public Color NightSkyColor => _nightSkyColor;
+        public Color DawnLightColor => _dawnLightColor;
+        public Color DayLightColor => _dayLightColor;
+        public Color NightLightColor => _nightLightColor;
+        public float SkyTransitionSeconds => _skyTransitionSeconds;
 
         /// <summary>Ring centerline radius so tileCount tiles of TileWidth close the circle.</summary>
         public float PlanetRadius(int tileCount) => tileCount * _tileWidth / (2f * Mathf.PI);

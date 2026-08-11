@@ -12,6 +12,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 64e10c129bae6fb4fb041c0349e0d89a, type: 3}
   m_Name: GameConfig
   m_EditorClassIdentifier: FlowersVsCorruption::FlowersVsCorruption.Core.GameConfig
+  _dawnDurationSeconds: 10
+  _dayDurationSeconds: 80
+  _nightDurationSeconds: 40
+  _dawnSkyColor: {r: 1, g: 0.7, b: 0.5, a: 1}
+  _daySkyColor: {r: 0.5, g: 0.8, b: 1, a: 1}
+  _nightSkyColor: {r: 0.1, g: 0.1, b: 0.3, a: 1}
+  _dawnLightColor: {r: 1, g: 0.8, b: 0.6, a: 1}
+  _dayLightColor: {r: 1, g: 1, b: 0.9, a: 1}
+  _nightLightColor: {r: 0.2, g: 0.2, b: 0.5, a: 1}
+  _skyTransitionSeconds: 3
   _tileWidth: 1
   _tileHeight: 0.6
   _tileOverlapScale: 1.08
+  _walkSpeedTilesPerSecond: 1
+  _playerSize: {x: 0.3, y: 0.5}
+  _cameraOrthoSize: 2.5
+  _cameraSmoothTime: 0.15
+  _cameraVerticalOffset: 0
