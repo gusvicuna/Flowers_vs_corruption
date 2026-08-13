@@ -77,7 +77,7 @@ Sort into three columns from day one. This replaces a backlog: everything is bor
 | Health system. The only stat that kills you. Drains from: standing on corrupted tiles, eating corrupted crops, and slowly while hunger is at 0\. | Fighting corruption |  |
 | Day/Night time system |  |  |
 | Inventory system |  |  |
-| Corruption system. Spreads to adjacent tiles at night; cannot spread into a tile guarded by a living flower; pushed back by grown flowers at dawn. |  |  |
+| Corruption system. Spreads at nightfall: every frontier of every corrupted region advances N tiles (tunable, default 1). No tile type is immune — rocks and the house corrupt like any tile (house corrupted \= defeat). Cannot spread into a tile guarded by a living flower; pushed back by grown flowers at dawn. |  |  |
 | Planting system. A fully-grown flower cleanses its adjacent corrupted tile(s) at dawn. |  |  |
 | Corrupted crops |  |  |
 | Dynamic weather system |  |  |

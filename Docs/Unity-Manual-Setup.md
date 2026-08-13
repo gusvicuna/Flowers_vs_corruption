@@ -258,3 +258,62 @@ Nothing else by hand. Save the scene.
 ### 4. Tests
 
 Test Runner → EditMode → Run All → **52 green**.
+
+---
+
+## Feature 4 — Corruption Spread
+
+Same split as Feature 3: **Gus writes the code and does the editor work**; the tests
+(`Tests/CorruptionSystemTests.cs`) are the pre-written spec.
+
+### 0. Code order (red → green)
+
+1. Create `Scripts/World/CorruptionSystem.cs` with the exact API from the plan
+   (ctor `WorldGrid`, `Func<int,bool> IsTileGuarded`, `event Action<int> HouseCorrupted`,
+   `void Spread(int waves)`; bodies `throw new NotImplementedException()`) so tests compile.
+2. Test Runner: new red, old green.
+3. Implement until **all green** (69 as of this feature). Key semantics the tests enforce:
+   - A wave collects every clean, unguarded tile with ≥1 corrupted neighbor **first**, then
+     corrupts them all via `grid.SetCorrupted(i, true)` — collect-then-apply, or one wave
+     snowballs into an avalanche.
+   - Use `grid.NextIndex`/`PreviousIndex` for neighbors (ring wraparound), never `i±1`.
+   - `HouseCorrupted` comes from subscribing to `grid.TileChanged` in the constructor — NOT
+     from inside `Spread` — so corruption from any source (debug toggle included) triggers it.
+4. Then `CorruptionController` (MonoBehaviour): create the system in `Start` with
+   `_worldView.Grid`, subscribe `_timeSystem.NightStarted` → `System.Spread(_config.CorruptionSpreadPerNight)`,
+   unsubscribe in `OnDestroy`, and log something loud in a `HouseCorrupted` handler
+   (placeholder for the future lose screen).
+5. `GameConfig`: `[Header("Corruption")] int _corruptionSpreadPerNight` (`Min(0)`, default 1)
+   + getter.
+
+### 1. Data — `GameConfig.asset`
+
+Verify the new *Corruption* section: **Corruption Spread Per Night = 1**.
+
+### 2. Scene changes (`Game.unity`)
+
+Add the `CorruptionController` component to the existing `TimeSystem` GameObject and wire:
+World View = `World` · Time System = `TimeSystem` (same GO) · Config = `GameConfig`.
+Save the scene.
+
+### 3. Verify (Play Mode)
+
+Shorten durations first for fast iteration (Day 10 / Night 5, re-enter Play Mode):
+
+- The instant each night falls, the corrupted arc grows by 1 tile on each end.
+- Corrupt a lone far-away tile with the debug Action (S) → next night that island grows on
+  both sides too.
+- Let corruption reach the house → Console logs the `HouseCorrupted` placeholder, exactly once.
+- Set Spread Per Night = 3 → each front jumps 3 tiles per night.
+
+### 4. Tests
+
+Test Runner → EditMode → Run All → **69 green**.
+
+### Addendum — the house is always tile 0
+
+Decided while building this feature: layouts where index 0 is not a House tile are invalid.
+`WorldGrid`'s constructor now throws on them, `WorldGridTests` covers it, and systems may rely
+on the invariant. During the review a latent bug was also fixed: `HouseCorrupted` fired on ANY
+change to the house tile — including a future cleanse. It now checks the tile is actually
+corrupted (covered by `HouseCorrupted_CleansingHouse_DoesNotFire`).
