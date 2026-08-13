@@ -10,6 +10,8 @@ namespace FlowersVsCorruption.Core
         [SerializeField, Min(0.1f)] private float _dayDurationSeconds = 90f;
         [SerializeField, Min(0.1f)] private float _nightDurationSeconds = 30f;
 
+        [Header("Corruption")]
+        [SerializeField, Min(0)] private int _corruptionSpreadPerNight = 1;
         [Header("Sky")]
         [SerializeField] private Color _dawnSkyColor = new Color(1f, 0.7f, 0.5f);
         [SerializeField] private Color _daySkyColor = new Color(0.5f, 0.8f, 1f);
@@ -39,6 +41,7 @@ namespace FlowersVsCorruption.Core
         public float TileHeight => _tileHeight;
         public float TileOverlapScale => _tileOverlapScale;
         public float WalkSpeedTilesPerSecond => _walkSpeedTilesPerSecond;
+        public int CorruptionSpreadPerNight => _corruptionSpreadPerNight;
         public Vector2 PlayerSize => _playerSize;
         public float CameraOrthoSize => _cameraOrthoSize;
         public float CameraSmoothTime => _cameraSmoothTime;
