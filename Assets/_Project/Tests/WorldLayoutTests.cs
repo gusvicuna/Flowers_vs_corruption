@@ -147,6 +147,7 @@ namespace FlowersVsCorruption.Tests
             var tiles = new TileType[Count];
             for (int i = 0; i < Count; i++)
                 tiles[i] = TileType.Soil;
+            tiles[0] = TileType.House;
 
             WithLayout(tiles, 1, layout =>
             {

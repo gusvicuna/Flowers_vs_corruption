@@ -20,6 +20,8 @@ namespace FlowersVsCorruption.World
         {
             if (tileTypes == null || tileTypes.Count == 0)
                 throw new ArgumentException("WorldGrid needs at least one tile.", nameof(tileTypes));
+            if (tileTypes[0] != TileType.House)
+                throw new ArgumentException("Index 0 must be the House tile.", nameof(tileTypes));
 
             _tiles = new Tile[tileTypes.Count];
             for (int i = 0; i < _tiles.Length; i++)

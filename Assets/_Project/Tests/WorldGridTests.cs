@@ -38,6 +38,16 @@ namespace FlowersVsCorruption.Tests
         }
 
         [Test]
+        public void Constructor_NoHouseAtIndexZero_Throws()
+        {
+            var types = new TileType[Count];
+            for (int i = 0; i < Count; i++)
+                types[i] = TileType.Soil;
+
+            Assert.Throws<ArgumentException>(() => new WorldGrid(types));
+        }
+
+        [Test]
         public void WrapIndex_HandlesNegativesAndOverflow()
         {
             WorldGrid grid = MakeGrid();
