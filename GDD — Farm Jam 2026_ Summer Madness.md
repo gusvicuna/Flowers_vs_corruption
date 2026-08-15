@@ -78,8 +78,8 @@ Sort into three columns from day one. This replaces a backlog: everything is bor
 | Day/Night time system |  |  |
 | Inventory system |  |  |
 | Corruption system. Spreads at nightfall: every frontier of every corrupted region advances N tiles (tunable, default 1). No tile type is immune — rocks and the house corrupt like any tile (house corrupted \= defeat). Cannot spread into a tile guarded by a living flower; pushed back by grown flowers at dawn. |  |  |
-| Planting system. A fully-grown flower cleanses its adjacent corrupted tile(s) at dawn. |  |  |
-| Corrupted crops |  |  |
+| Planting system. Two base crops: the Flower (not edible; only when fully grown it guards its tile — each corruption attempt costs it 1 life, tunable — and cleanses both adjacent corrupted tiles at every dawn, persisting while alive) and the Food crop (edible, no protection). Growing crops need to be watered that day to gain \+1 level at dawn. Crops die when corruption enters their tile. One contextual Action button: harvest \> water \> plant the selected seed (seed cycle with Q/E — includes the corrupted seed; planting fails if the seed doesn't match the ground). Harvesting a grown flower gives up the shield in exchange for flower powder (with the inventory, powder becomes a selectable that cleanses the tile under the player). |  |  |
+| Corrupted crops. Plantable only on corrupted soil; die if their tile is cleansed. Full design: their seeds drop from crops killed by corruption (economy arrives with the inventory system). |  |  |
 | Dynamic weather system |  |  |
 | Hunger system. Refilled by manually eating a crop from the inventory. At 0 it does not kill — it slowly drains health instead. |  |  |
 
@@ -145,7 +145,8 @@ How it connects to the core loop:
 How it connects to the core loop:
 
 > * Corrupted crops give more food but expands the corruption more  
-> * Eating a corrupted crop also damages the player's health (risk/reward)
+> * Eating a corrupted crop also damages the player's health (risk/reward)  
+> * Corrupted seeds drop when corruption kills a crop; they can only be planted on corrupted soil, and the crop dies if its tile is purified — farming the enemy's land is a deliberate gamble
 
 ## **10\. Win / Lose Conditions (if applicable)**
 

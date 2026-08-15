@@ -310,6 +310,144 @@ Shorten durations first for fast iteration (Day 10 / Night 5, re-enter Play Mode
 
 Test Runner → EditMode → Run All → **69 green**.
 
+---
+
+## Feature 5 — Planting & Farming
+
+Same split: **Gus writes code and editor**; the pre-written spec lives in
+`Tests/FarmingSystemTests.cs` plus additions to `CorruptionSystemTests` and `WorldGridTests`.
+The `.inputactions` already has the new **PreviousSeed** (Q / left shoulder) and **NextSeed**
+(E / right shoulder) actions — nothing to edit there.
+
+### 0. Code order (red → green)
+
+1. Skeletons so the test assembly compiles, exact signatures from the plan:
+   - `Scripts/Farming/CropDefinition.cs` (SO + `PlantableGround` enum `{ CleanSoil, CorruptedSoil }`)
+   - `Scripts/Farming/Crop.cs`
+   - `Scripts/Farming/FarmingSystem.cs`
+   - `WorldGrid`: add `GetCrop(int)` / `SetCrop(int, Crop)` + `Tile.Crop`
+   - `CorruptionSystem`: add `event Action<int> SpreadBlocked`
+2. Test Runner: ~34 new red, 69 old green. Implement until **103 green**.
+3. Implementation notes the tests enforce:
+   - `SetCrop` fires `TileChanged` (same-crop set is silent; removal fires) — the view depends on it.
+   - **FarmingSystem subscribes to `grid.TileChanged` in its constructor** and kills the occupant
+     when a tile becomes corrupted — the tests corrupt tiles directly and expect the crop to die
+     with no extra calls (no public "OnCorruptionEntered" needed).
+   - In `CorruptionSystem.FindTilesToCorrupt`, check **adjacency before guard**: a guarded tile
+     far from any front must not receive `SpreadBlocked`.
+   - `OnDawn` order: cleanse → growth → watered reset (a flower finishing growth this dawn
+     cleanses only from the next dawn).
+   - A flower dying to `OnSpreadBlocked` leaves its tile CLEAN — the killing wave is spent.
+4. Then the presentation layer:
+   - `FarmingController` (creates the system, wires guard + `SpreadBlocked` into
+     `CorruptionController.System`, subscribes `DawnStarted` and `TileActionPerformed`,
+     seed cycling, harvest counters).
+   - ⚠️ Make `CorruptionController.System` **lazy** (getter creates it from `_worldView.Grid`
+     if null; `Start` just ensures creation) — `Start` order between controllers is undefined.
+   - **Delete the TEMP corruption-toggle block** in `PlayerController.OnTileAction` — otherwise
+     every plant also flips the tile's corruption.
+   - `TileView`: third child renderer for the crop (sprite/tint from the definition, height
+     scaled by stage ~0.35→0.8 of tile height via `SpriteFitter`), ground darkened while watered.
+   - `FarmDebugHud` (TEMP): selected seed + harvest counts.
+
+### 1. Data assets → `Data/Crops/`
+
+Create three via `Assets > Create > FvC > Crop Definition`:
+
+| Field | Flower | FoodCrop | CorruptedCrop |
+| --- | --- | --- | --- |
+| Display Name | Flower | Food | Corrupted |
+| Sprite | `Circle` | `Circle` | `Circle` |
+| Tint | `E84D8A` | `7BC950` | `9B30B0` |
+| Growth Stages | 3 | 3 | 3 |
+| Plantable On | Clean Soil | Clean Soil | Corrupted Soil |
+| Guards When Grown | ✔ | ✘ | ✘ |
+| Cleanses When Grown | ✔ | ✘ | ✘ |
+| Grown Health | 3 | – | – |
+| Harvestable | ✘ | ✔ | ✔ |
+
+### 2. Prefab `Tile`
+
+Add a third child `Crop`: SpriteRenderer, sprite **empty** (code assigns it), **Sorting Order = 15**.
+Wire it into the `TileView` **Crop** field. (Ground = 10, Overlay = 11, Crop = 15, Highlight = 12,
+Player = 20 — the crop draws above the tile but under the player.)
+
+### 3. Scene changes (`Game.unity`)
+
+On the `TimeSystem` GameObject add `FarmingController` and `FarmDebugHud`, then wire:
+
+| Component | Field | Value |
+| --- | --- | --- |
+| `FarmingController` | World View / Time System / Corruption Controller / Player | scene objects |
+| | Seed Cycle | size 2: `Flower`, `FoodCrop` |
+| | Corrupted Crop | `CorruptedCrop` |
+| | Previous Seed / Next Seed | expand `InputSystem_Actions` → drag `Player/PreviousSeed`, `Player/NextSeed` |
+| `FarmDebugHud` | Farming Controller | same GO |
+
+Save the scene.
+
+### 4. Verify (Play Mode — short durations help: Day 15 / Night 8 / Dawn 2)
+
+- Plant food (E to select) on clean soil, water it (Action again), watch the wet-soil darkening;
+  at dawn it grows only if watered; after 2 watered dawns harvest it → HUD counter +1.
+- Plant a flower next to the front; while growing, the night wave kills it. Grow one further
+  back: once grown it blocks the wave (front stalls), and each dawn it cleanses its neighbors.
+- Walk onto corrupted soil → Action plants the corrupted crop regardless of selection; when a
+  flower cleanses that tile, the corrupted crop dies.
+- Q/E cycle the selected seed in the HUD.
+
+### 5. Tests
+
+Test Runner → EditMode → Run All → **106 green**.
+
+### Addendum — corrupted seed in the cycle, flowers harvestable
+
+Design change: no more auto-planting the corrupted crop on corrupted soil — the corrupted
+seed now lives in the seed cycle (Q/E) like any other, and planting simply fails when the
+selected seed doesn't match the ground. This paves the way for non-seed selectables (flower
+powder). Flowers are now **harvestable**: harvesting a grown one trades the shield for
+powder (item arrives with the inventory; today it just counts in the HUD).
+
+**Editor steps**: on `FarmingController` the *Corrupted Crop* field is gone — set **Seed
+Cycle** to size **3**: `Flower`, `FoodCrop`, `CorruptedCrop`. (`Flower.asset` is already
+flipped to Harvestable ✔.) Save the scene. Tests: **108 green**.
+
+### Addendum — grown-crop health bars
+
+Grown crops show a small bar above them: full = ready to harvest (food) / unhurt (flower);
+a guarding flower's bar drains as spread waves hit it (red→green by fraction). Sizes,
+positions, sorting orders and colors are all code-driven.
+
+**Editor steps**: in the `Tile` prefab add two children — `HealthBarBg` and `HealthBarFill` —
+each with a SpriteRenderer, sprite = `Square`, everything else untouched. Wire them into
+`TileView`'s **Health Bar Background** / **Health Bar Fill** fields. Save.
+Tests are now **107 green**.
+
+### Addendum — HUD layout & first-day controls
+
+The farming HUD is now right-anchored (the time HUD owns the top-left). New `ControlsHud`
+(TEMP, `Scripts/UI/`) shows the control reference in a bottom-center box during day 1 only.
+**One editor step**: add the `ControlsHud` component to the `TimeSystem` GameObject and wire
+its **Time System** field. Save the scene.
+
+### Addendum — in-place crop mutations must notify the view
+
+Found in playtest: watering and dawn growth mutate the `Crop` object directly, so they never
+fired `TileChanged` and the wet-soil/growth visuals froze (planting worked because `SetCrop`
+fires). Fix: `WorldGrid.NotifyTileChanged` (internal) re-broadcasts a tile whose crop changed
+in place; `FarmingSystem` calls it on water, on growth, **and on the watered reset** — views
+redraw synchronously per notification, so the dawn's final notification must come after the
+flag reset or the soil stays dark. Three tests pin this. `TileView` also stopped using
+`Renderer.bounds` (world-space AABB — wrong on rotated tiles) in favor of the sizes `Init`
+receives, and crops now sit on the tile surface.
+
+Second playtest catch: `CropDefinition._tint` had no default, and an uninitialized `Color` is
+`(0,0,0,0)` — the hex picker leaves alpha at 0, so all three crop assets rendered fully
+transparent. The field now defaults to white, and the assets were fixed to alpha 1. Rule of
+thumb adopted: **every serialized `Color` gets an explicit default.**
+
+---
+
 ### Addendum — the house is always tile 0
 
 Decided while building this feature: layouts where index 0 is not a House tile are invalid.
