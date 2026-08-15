@@ -148,6 +148,54 @@ namespace FlowersVsCorruption.Tests
         }
 
         [Test]
+        public void SetCrop_StoresAndRaisesTileChanged_SameCropSilent()
+        {
+            WorldGrid grid = MakeGrid();
+            var definition = UnityEngine.ScriptableObject.CreateInstance<Farming.CropDefinition>();
+            try
+            {
+                var crop = new Farming.Crop(definition);
+                var received = new List<int>();
+                grid.TileChanged += received.Add;
+
+                grid.SetCrop(5, crop);
+                grid.SetCrop(5, crop);   // same crop: no event
+
+                Assert.That(grid.GetCrop(5), Is.SameAs(crop));
+                Assert.That(received, Is.EqualTo(new[] { 5 }));
+
+                grid.SetCrop(5, null);   // removal fires again
+
+                Assert.That(grid.GetCrop(5), Is.Null);
+                Assert.That(received, Is.EqualTo(new[] { 5, 5 }));
+            }
+            finally
+            {
+                UnityEngine.Object.DestroyImmediate(definition);
+            }
+        }
+
+        [Test]
+        public void SetCropAndGetCrop_WrapIndex()
+        {
+            WorldGrid grid = MakeGrid();
+            var definition = UnityEngine.ScriptableObject.CreateInstance<Farming.CropDefinition>();
+            try
+            {
+                var crop = new Farming.Crop(definition);
+
+                grid.SetCrop(Count + 3, crop);
+
+                Assert.That(grid.GetCrop(3), Is.SameAs(crop));
+                Assert.That(grid.GetCrop(3 - Count), Is.SameAs(crop));
+            }
+            finally
+            {
+                UnityEngine.Object.DestroyImmediate(definition);
+            }
+        }
+
+        [Test]
         public void FindFirstIndex_FindsPolesAndReportsMissing()
         {
             WorldGrid grid = MakeGrid();

@@ -167,6 +167,55 @@ namespace FlowersVsCorruption.Tests
         }
 
         [Test]
+        public void SpreadBlocked_FiredForBlockedFrontierTile()
+        {
+            WorldGrid grid = MakeGrid();
+            var system = new CorruptionSystem(grid);
+            grid.SetCorrupted(BaseIndex, true);
+            system.IsTileGuarded = index => index == 13;
+            var blocked = new List<int>();
+            system.SpreadBlocked += blocked.Add;
+
+            system.Spread(1);
+
+            Assert.That(blocked, Is.EqualTo(new[] { 13 }));
+            Assert.That(CorruptedIndices(grid), Is.EquivalentTo(new[] { 11, 12 }));
+        }
+
+        [Test]
+        public void SpreadBlocked_FiredOncePerWave()
+        {
+            WorldGrid grid = MakeGrid();
+            var system = new CorruptionSystem(grid);
+            grid.SetCorrupted(BaseIndex, true);
+            system.IsTileGuarded = index => index == 13;
+            var blocked = new List<int>();
+            system.SpreadBlocked += blocked.Add;
+
+            system.Spread(2);
+
+            Assert.That(blocked, Is.EqualTo(new[] { 13, 13 }));
+        }
+
+        [Test]
+        public void SpreadBlocked_NotFiredForGuardedTilesAwayFromTheFront()
+        {
+            WorldGrid grid = MakeGrid();
+            var system = new CorruptionSystem(grid);
+            grid.SetCorrupted(BaseIndex, true);
+            // Guard a tile nowhere near the corruption: it is not being
+            // attacked, so it must NOT report a blocked attempt.
+            system.IsTileGuarded = index => index == 5;
+            var blocked = new List<int>();
+            system.SpreadBlocked += blocked.Add;
+
+            system.Spread(1);
+
+            Assert.That(blocked, Is.Empty);
+            Assert.That(CorruptedIndices(grid), Is.EquivalentTo(new[] { 11, 12, 13 }));
+        }
+
+        [Test]
         public void HouseCorrupted_FiresOnceOnDirectSet()
         {
             WorldGrid grid = MakeGrid();

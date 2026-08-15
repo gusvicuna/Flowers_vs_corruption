@@ -22,6 +22,8 @@ namespace FlowersVsCorruption.World
         /// SIN IMPORTAR la fuente (spread, debug, lo que sea). Arg: índice del tile.
         public event Action<int> HouseCorrupted;
 
+        public event Action<int> SpreadBlocked;
+
         /// Avanza la corrupción `waves` oleadas (no-op si waves <= 0).
         public void Spread(int waves)
         {
@@ -40,9 +42,14 @@ namespace FlowersVsCorruption.World
             var tilesToCorrupt = new List<int>();
             for (int i = 0; i < _grid.TileCount; i++)
             {
-                if (_grid.IsCorrupted(i) || IsTileGuarded != null && IsTileGuarded(i)) continue;
+                if (_grid.IsCorrupted(i)) continue;
                 if (_grid.IsCorrupted(_grid.NextIndex(i)) || _grid.IsCorrupted(_grid.PreviousIndex(i)))
                 {
+                    if (IsTileGuarded != null && IsTileGuarded(i))
+                    {
+                        SpreadBlocked?.Invoke(i);
+                        continue;
+                    }
                     tilesToCorrupt.Add(i);
                 }
             }

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using FlowersVsCorruption.Farming;
 
 namespace FlowersVsCorruption.World
 {
@@ -15,6 +16,7 @@ namespace FlowersVsCorruption.World
         public float ArcPerTileDegrees => 360f / _tiles.Length;
 
         public event Action<int> TileChanged;
+        public event Action<int> TileCorrupted;
 
         public WorldGrid(IReadOnlyList<TileType> tileTypes)
         {
@@ -61,6 +63,8 @@ namespace FlowersVsCorruption.World
 
             tile.IsCorrupted = corrupted;
             TileChanged?.Invoke(wrapped);
+            if (corrupted)
+                TileCorrupted?.Invoke(wrapped);
         }
 
         /// <summary>First index holding the given type, or -1 if absent.</summary>
@@ -74,5 +78,24 @@ namespace FlowersVsCorruption.World
 
             return -1;
         }
+
+        public Crop GetCrop(int index) => GetTile(index).crop;
+
+        public void SetCrop(int index, Crop crop)
+        {
+            int wrapped = WrapIndex(index);
+            Tile tile = _tiles[wrapped];
+            if (tile.crop == crop)
+                return;
+
+            tile.crop = crop;
+            TileChanged?.Invoke(wrapped);
+        }
+
+        /// <summary>
+        /// Re-broadcasts a tile whose crop mutated in place (watered, grew) —
+        /// those changes don't go through SetCrop but views still need them.
+        /// </summary>
+        internal void NotifyTileChanged(int index) => TileChanged?.Invoke(WrapIndex(index));
     }
 }
