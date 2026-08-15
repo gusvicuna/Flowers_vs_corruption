@@ -13,8 +13,9 @@ MonoBehaviour:
   m_Name: GameConfig
   m_EditorClassIdentifier: FlowersVsCorruption::FlowersVsCorruption.Core.GameConfig
   _dawnDurationSeconds: 10
-  _dayDurationSeconds: 80
-  _nightDurationSeconds: 40
+  _dayDurationSeconds: 40
+  _nightDurationSeconds: 20
+  _corruptionSpreadPerNight: 2
   _dawnSkyColor: {r: 1, g: 0.7, b: 0.5, a: 1}
   _daySkyColor: {r: 0.5, g: 0.8, b: 1, a: 1}
   _nightSkyColor: {r: 0.1, g: 0.1, b: 0.3, a: 1}
