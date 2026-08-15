@@ -86,13 +86,6 @@ namespace FlowersVsCorruption.Player
 
             int index = _walker.CurrentTileIndex;
             TileActionPerformed?.Invoke(index);
-
-            // TEMP (Feature 2 debug): toggles corruption to prove the
-            // input -> tile -> grid -> view chain; replaced by real tile
-            // actions in the farming feature.
-            WorldGrid grid = _worldView.Grid;
-            grid.SetCorrupted(index, !grid.IsCorrupted(index));
-            Debug.Log($"Tile action on {index} ({grid.GetTile(index).Type})", this);
         }
     }
 }

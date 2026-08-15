@@ -132,6 +132,9 @@ GameObject:
   - component: {fileID: 2159300}
   - component: {fileID: 2159299}
   - component: {fileID: 2159303}
+  - component: {fileID: 2159304}
+  - component: {fileID: 2159305}
+  - component: {fileID: 2159306}
   m_Layer: 0
   m_Name: TimeSystem
   m_TagString: Untagged
@@ -211,6 +214,55 @@ MonoBehaviour:
   _worldView: {fileID: 1966904906}
   _timeSystem: {fileID: 2159301}
   _gameConfig: {fileID: 11400000, guid: 46c689c9dea11c143845b1aebcd0e7fe, type: 2}
+--- !u!114 &2159304
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2159298}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ac40991f8640d7a4d8ead5245484a25d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: FlowersVsCorruption::FlowersVsCorruption.Farming.FarmingController
+  _worldView: {fileID: 1966904906}
+  _timeSystem: {fileID: 2159301}
+  _corruptionController: {fileID: 2159303}
+  _playerController: {fileID: 8114571592054431365}
+  _tileVisuals: {fileID: 11400000, guid: 90aeafe7d02f13447925d1c1bb8400a2, type: 2}
+  _seedCycle:
+  - {fileID: 11400000, guid: b547db43765028d478fe277e3a6baa74, type: 2}
+  - {fileID: 11400000, guid: a3bcde902d57f244c83b823be373675b, type: 2}
+  - {fileID: 11400000, guid: 6e87f29e7af89b442a5df67e605f96a6, type: 2}
+  _previousSeed: {fileID: 3485064901942636380, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
+  _nextSeed: {fileID: 8481979630692661568, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
+--- !u!114 &2159305
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2159298}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 49091068c5ffb4341bb81cb48b67cc4a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: FlowersVsCorruption::FlowersVsCorruption.Farming.FarmDebugHUD
+  _farmingController: {fileID: 2159304}
+--- !u!114 &2159306
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2159298}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5dc96a53cef6c0b408a0673816becbe4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: FlowersVsCorruption::FlowersVsCorruption.UI.ControlsHud
+  _timeSystem: {fileID: 2159301}
 --- !u!1 &283174580
 GameObject:
   m_ObjectHideFlags: 0

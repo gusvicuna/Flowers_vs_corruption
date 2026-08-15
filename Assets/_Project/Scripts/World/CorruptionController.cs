@@ -10,11 +10,11 @@ namespace FlowersVsCorruption.World
         [SerializeField] private GameConfig _gameConfig;
 
         private CorruptionSystem _corruptionSystem;
-        public CorruptionSystem CorruptionSystem => _corruptionSystem;
+        public CorruptionSystem CorruptionSystem => _corruptionSystem ??= new CorruptionSystem(_worldView.Grid);
 
         private void Start()
         {
-            _corruptionSystem = new CorruptionSystem(_worldView.Grid);
+            _ = CorruptionSystem; // ensure created before events wire up
             _timeSystem.NightStarted += OnNightStarted;
             _corruptionSystem.HouseCorrupted += OnHouseCorrupted;
         }

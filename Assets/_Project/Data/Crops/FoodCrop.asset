@@ -1,0 +1,23 @@
+﻿%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 961183f318499fe4d8c6d7ddaf5b0af6, type: 3}
+  m_Name: FoodCrop
+  m_EditorClassIdentifier: FlowersVsCorruption::FlowersVsCorruption.Farming.CropDefinition
+  _displayName: Food
+  _sprite: {fileID: 3540042661835697838, guid: 24ccc02aa2a7099449ed7c08641c17c7, type: 3}
+  _tint: {r: 0.48235294, g: 0.7882353, b: 0.3137255, a: 1}
+  _growthStages: 3
+  _plantableOn: 0
+  _guardsWhenGrown: 0
+  _cleansesWhenGrown: 0
+  _grownHealth: 1
+  _isHarvestable: 1
