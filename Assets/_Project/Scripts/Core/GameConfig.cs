@@ -1,3 +1,4 @@
+using FlowersVsCorruption.Player;
 using UnityEngine;
 
 namespace FlowersVsCorruption.Core
@@ -13,12 +14,12 @@ namespace FlowersVsCorruption.Core
         [Header("Corruption")]
         [SerializeField, Min(0)] private int _corruptionSpreadPerNight = 1;
         [Header("Sky")]
-        [SerializeField] private Color _dawnSkyColor = new Color(1f, 0.7f, 0.5f);
-        [SerializeField] private Color _daySkyColor = new Color(0.5f, 0.8f, 1f);
-        [SerializeField] private Color _nightSkyColor = new Color(0.1f, 0.1f, 0.3f);
-        [SerializeField] private Color _dawnLightColor = new Color(1f, 0.8f, 0.6f);
-        [SerializeField] private Color _dayLightColor = new Color(1f, 1f, 0.9f);
-        [SerializeField] private Color _nightLightColor = new Color(0.2f, 0.2f, 0.5f);
+        [SerializeField] private Color _dawnSkyColor = new(1f, 0.7f, 0.5f);
+        [SerializeField] private Color _daySkyColor = new(0.5f, 0.8f, 1f);
+        [SerializeField] private Color _nightSkyColor = new(0.1f, 0.1f, 0.3f);
+        [SerializeField] private Color _dawnLightColor = new(1f, 0.8f, 0.6f);
+        [SerializeField] private Color _dayLightColor = new(1f, 1f, 0.9f);
+        [SerializeField] private Color _nightLightColor = new(0.2f, 0.2f, 0.5f);
         [SerializeField, Min(0.1f)] private float _skyTransitionSeconds = 5f;
 
         [Header("World Geometry")]
@@ -29,7 +30,13 @@ namespace FlowersVsCorruption.Core
 
         [Header("Player")]
         [SerializeField, Min(0.1f)] private float _walkSpeedTilesPerSecond = 2f;
-        [SerializeField] private Vector2 _playerSize = new Vector2(0.6f, 1f);
+        [SerializeField] private Vector2 _playerSize = new(0.6f, 1f);
+        [Header("Vitals")]
+        [SerializeField, Min(0.1f)] private float _maxHunger = 100f;
+        [SerializeField, Min(0f)] private float _maxHealth = 100f;
+        [SerializeField, Min(0f)] private float _hungerDrainPerSecond = 0.6f;
+        [SerializeField, Min(0f)] private float _corruptionDamagePerSecond = 8f;
+        [SerializeField, Min(0f)] private float _starvingDamagePerSecond = 2f;
 
         [Header("Camera")]
         [SerializeField, Min(0.5f)] private float _cameraOrthoSize = 2.5f;
@@ -56,6 +63,22 @@ namespace FlowersVsCorruption.Core
         public Color DayLightColor => _dayLightColor;
         public Color NightLightColor => _nightLightColor;
         public float SkyTransitionSeconds => _skyTransitionSeconds;
+        public float MaxHunger => _maxHunger;
+        public float MaxHealth => _maxHealth;
+        public float HungerDrainPerSecond => _hungerDrainPerSecond;
+        public float CorruptionDamagePerSecond => _corruptionDamagePerSecond;
+        public float StarvingDamagePerSecond => _starvingDamagePerSecond;
+
+        public VitalsSettings CreateVitalsSettings() => new()
+        {
+            MaxHunger = _maxHunger,
+            MaxHealth = _maxHealth,
+            HungerDrainPerSecond = _hungerDrainPerSecond,
+            CorruptionDamagePerSecond = _corruptionDamagePerSecond,
+            StarvingDamagePerSecond = _starvingDamagePerSecond,
+            StartingHunger = _maxHunger,
+            StartingHealth = _maxHealth,
+        };
 
         /// <summary>Ring centerline radius so tileCount tiles of TileWidth close the circle.</summary>
         public float PlanetRadius(int tileCount) => tileCount * _tileWidth / (2f * Mathf.PI);

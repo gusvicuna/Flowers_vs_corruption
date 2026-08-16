@@ -632,6 +632,11 @@ MonoBehaviour:
   _worldView: {fileID: 1966904906}
   _config: {fileID: 11400000, guid: 46c689c9dea11c143845b1aebcd0e7fe, type: 2}
   _camera: {fileID: 1118856685}
+--- !u!1 &1789998969 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3396357590995743411, guid: c3b48d1a3e2cf2340afd74c40c3716f1, type: 3}
+  m_PrefabInstance: {fileID: 8114571592054431364}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1966904905
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -759,19 +764,54 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 3396357590995743411, guid: c3b48d1a3e2cf2340afd74c40c3716f1, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 8114571592054431368}
+    - targetCorrespondingSourceObject: {fileID: 3396357590995743411, guid: c3b48d1a3e2cf2340afd74c40c3716f1, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 8114571592054431367}
   m_SourcePrefab: {fileID: 100100000, guid: c3b48d1a3e2cf2340afd74c40c3716f1, type: 3}
 --- !u!114 &8114571592054431365 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 2269260719349511407, guid: c3b48d1a3e2cf2340afd74c40c3716f1, type: 3}
   m_PrefabInstance: {fileID: 8114571592054431364}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 1789998969}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: af29805c8cd4ca744a4e1bec64b41170, type: 3}
   m_Name: 
   m_EditorClassIdentifier: FlowersVsCorruption::FlowersVsCorruption.Player.PlayerController
+--- !u!114 &8114571592054431367
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1789998969}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 69ecf1b5bcb78084a808baf46f113820, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: FlowersVsCorruption::FlowersVsCorruption.Player.VitalsDebugHud
+  _vitalsController: {fileID: 8114571592054431368}
+--- !u!114 &8114571592054431368
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1789998969}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 79bc77740d4b7e74abcf385665edd1e6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: FlowersVsCorruption::FlowersVsCorruption.Player.PlayerVitalsController
+  _gameConfig: {fileID: 11400000, guid: 46c689c9dea11c143845b1aebcd0e7fe, type: 2}
+  _worldView: {fileID: 1966904906}
+  _playerController: {fileID: 8114571592054431365}
+  _timeSystem: {fileID: 2159301}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

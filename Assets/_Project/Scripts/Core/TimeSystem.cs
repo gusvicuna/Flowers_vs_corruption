@@ -44,5 +44,15 @@ namespace FlowersVsCorruption.Core
         {
             _dayNightClock.Tick(Time.deltaTime);
         }
+
+        public void StopClock()
+        {
+            _dayNightClock.Stop();
+        }
+
+        public void ResumeClock()
+        {
+            _dayNightClock.Resume();
+        }
     }
 }

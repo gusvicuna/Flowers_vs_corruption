@@ -1,4 +1,4 @@
-﻿%YAML 1.1
+%YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
 --- !u!114 &11400000
 MonoBehaviour:
@@ -21,3 +21,6 @@ MonoBehaviour:
   _cleansesWhenGrown: 0
   _grownHealth: 1
   _isHarvestable: 1
+  _hungerRestored: 25
+  _healthRestored: 5
+  _healthDamage: 0

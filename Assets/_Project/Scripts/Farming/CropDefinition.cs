@@ -14,6 +14,10 @@ namespace FlowersVsCorruption.Farming
         [SerializeField] private bool _cleansesWhenGrown;
         [SerializeField][Min(1)] private int _grownHealth = 3;
         [SerializeField] private bool _isHarvestable;
+        [Header("Nutrition")]
+        [SerializeField][Min(0f)] private float _hungerRestored = 25f;
+        [SerializeField][Min(0f)] private float _healthRestored = 0f;
+        [SerializeField][Min(0f)] private float _healthDamage = 0f;
 
         public string DisplayName => _displayName;
         public Sprite Sprite => _sprite;
@@ -24,5 +28,8 @@ namespace FlowersVsCorruption.Farming
         public bool CleansesWhenGrown => _cleansesWhenGrown;
         public int GrownHealth => _grownHealth;
         public bool IsHarvestable => _isHarvestable;
+        public float HungerRestored => _hungerRestored;
+        public float HealthRestored => _healthRestored;
+        public float HealthDamage => _healthDamage;
     }
 }
