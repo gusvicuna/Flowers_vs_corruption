@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using FlowersVsCorruption.Farming;
 
@@ -79,16 +79,16 @@ namespace FlowersVsCorruption.World
             return -1;
         }
 
-        public Crop GetCrop(int index) => GetTile(index).crop;
+        public Crop GetCrop(int index) => GetTile(index).Crop;
 
         public void SetCrop(int index, Crop crop)
         {
             int wrapped = WrapIndex(index);
             Tile tile = _tiles[wrapped];
-            if (tile.crop == crop)
+            if (tile.Crop == crop)
                 return;
 
-            tile.crop = crop;
+            tile.Crop = crop;
             TileChanged?.Invoke(wrapped);
         }
 

@@ -1,4 +1,4 @@
-using FlowersVsCorruption.Core;
+﻿using FlowersVsCorruption.Core;
 using FlowersVsCorruption.Farming;
 using UnityEngine;
 
@@ -61,7 +61,7 @@ namespace FlowersVsCorruption.World
         {
             _corruptionOverlay.enabled = tile.IsCorrupted;
 
-            Crop crop = tile.crop;
+            Crop crop = tile.Crop;
             if (crop != null)
             {
                 _crop.enabled = true;

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using FlowersVsCorruption.World;
 
 namespace FlowersVsCorruption.Farming
@@ -22,7 +22,7 @@ namespace FlowersVsCorruption.Farming
         {
             if (def == null) return false;
             Tile tile = _grid.GetTile(index);
-            if (tile.crop != null) return false;
+            if (tile.Crop != null) return false;
             if (tile.Type == TileType.Soil)
             {
                 if (def.PlantableOn == PlantableGround.CleanSoil && !tile.IsCorrupted) return true;
@@ -41,9 +41,9 @@ namespace FlowersVsCorruption.Farming
         public bool Water(int index)
         {
             Tile tile = _grid.GetTile(index);
-            if (tile.crop == null) return false;
-            if (tile.crop.WateredToday || tile.crop.IsGrown) return false;
-            tile.crop.Water();
+            if (tile.Crop == null) return false;
+            if (tile.Crop.WateredToday || tile.Crop.IsGrown) return false;
+            tile.Crop.Water();
             _grid.NotifyTileChanged(index);
             CropWatered?.Invoke(index);
             return true;
@@ -51,7 +51,7 @@ namespace FlowersVsCorruption.Farming
         public bool Harvest(int index)
         {
             Tile tile = _grid.GetTile(index);
-            Crop crop = tile.crop;
+            Crop crop = tile.Crop;
             if (crop == null) return false;
             if (!crop.IsGrown || !crop.IsHarvestable) return false;
             _grid.SetCrop(index, null);
@@ -62,15 +62,15 @@ namespace FlowersVsCorruption.Farming
         public bool IsTileGuarded(int index)
         {
             Tile tile = _grid.GetTile(index);
-            if (tile.crop == null) return false;
-            return tile.crop.IsGrown && tile.crop.Definition.GuardsWhenGrown;
+            if (tile.Crop == null) return false;
+            return tile.Crop.IsGrown && tile.Crop.Definition.GuardsWhenGrown;
         }
         public void OnSpreadBlocked(int index)
         {
             Tile tile = _grid.GetTile(index);
-            if (tile.crop != null)
+            if (tile.Crop != null)
             {
-                Crop crop = tile.crop;
+                Crop crop = tile.Crop;
                 crop.Damage(1);
                 if (crop.Health <= 0)
                 {
@@ -85,12 +85,14 @@ namespace FlowersVsCorruption.Farming
                 }
             }
         }
-        public void OnCorruptionEntered(int index)
+        // Subscribed to WorldGrid.TileCorrupted in the constructor: corruption
+        // from ANY source kills whatever grows there.
+        private void OnCorruptionEntered(int index)
         {
             Tile tile = _grid.GetTile(index);
-            if (tile.crop != null && tile.IsCorrupted)
+            if (tile.Crop != null && tile.IsCorrupted)
             {
-                Crop crop = tile.crop;
+                Crop crop = tile.Crop;
                 _grid.SetCrop(index, null);
                 CropKilled?.Invoke(index, crop.Definition);
             }
@@ -106,33 +108,30 @@ namespace FlowersVsCorruption.Farming
         {
             for (int i = 0; i < _grid.TileCount; i++)
             {
-                Tile tile = _grid.GetTile(i);
-                if (tile.crop != null)
-                {
-                    if (tile.crop.IsGrown && tile.crop.Definition.CleansesWhenGrown)
-                    {
-                        Tile leftTile = _grid.GetTile(_grid.PreviousIndex(i));
-                        Tile rightTile = _grid.GetTile(_grid.NextIndex(i));
-                        if (leftTile.IsCorrupted)
-                        {
-                            _grid.SetCorrupted(_grid.PreviousIndex(i), false);
-                            if (leftTile.crop != null)
-                            {
-                                CropKilled?.Invoke(_grid.PreviousIndex(i), leftTile.crop.Definition);
-                                _grid.SetCrop(_grid.PreviousIndex(i), null);
-                            }
-                        }
-                        if (rightTile.IsCorrupted)
-                        {
-                            _grid.SetCorrupted(_grid.NextIndex(i), false);
-                            if (rightTile.crop != null)
-                            {
-                                CropKilled?.Invoke(_grid.NextIndex(i), rightTile.crop.Definition);
-                                _grid.SetCrop(_grid.NextIndex(i), null);
-                            }
-                        }
-                    }
-                }
+                Crop crop = _grid.GetTile(i).Crop;
+                if (crop == null || !crop.IsGrown || !crop.Definition.CleansesWhenGrown)
+                    continue;
+
+                CleanseTile(_grid.PreviousIndex(i));
+                CleanseTile(_grid.NextIndex(i));
+            }
+        }
+
+        private void CleanseTile(int index)
+        {
+            Tile tile = _grid.GetTile(index);
+            if (!tile.IsCorrupted)
+                return;
+
+            _grid.SetCorrupted(index, false);
+
+            // A corrupted crop dies with its ground — the exact mirror of
+            // corruption killing a clean crop.
+            Crop crop = tile.Crop;
+            if (crop != null)
+            {
+                _grid.SetCrop(index, null);
+                CropKilled?.Invoke(index, crop.Definition);
             }
         }
 
@@ -141,9 +140,9 @@ namespace FlowersVsCorruption.Farming
             for (int i = 0; i < _grid.TileCount; i++)
             {
                 Tile tile = _grid.GetTile(i);
-                if (tile.crop != null)
+                if (tile.Crop != null)
                 {
-                    Crop crop = tile.crop;
+                    Crop crop = tile.Crop;
                     if (!crop.IsGrown && crop.WateredToday)
                     {
                         crop.AdvanceGrowth();
@@ -158,9 +157,9 @@ namespace FlowersVsCorruption.Farming
             for (int i = 0; i < _grid.TileCount; i++)
             {
                 Tile tile = _grid.GetTile(i);
-                if (tile.crop != null && tile.crop.WateredToday)
+                if (tile.Crop != null && tile.Crop.WateredToday)
                 {
-                    tile.crop.ResetWatered();
+                    tile.Crop.ResetWatered();
                     // Growth() already notified, but views redraw synchronously
                     // and saw WateredToday still true — re-notify so the final
                     // redraw of the dawn sees the reset flag (dry soil again).

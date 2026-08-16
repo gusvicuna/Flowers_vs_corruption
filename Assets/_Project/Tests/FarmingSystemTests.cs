@@ -447,6 +447,26 @@ namespace FlowersVsCorruption.Tests
             Assert.That(killed, Is.EqualTo(new[] { (SoilA + 1, corrupted) }));
         }
 
+        [Test]
+        public void OnDawn_CleanseKillsCorruptedCrop_RemovesBeforeNotifying()
+        {
+            // The kill notification must be able to observe the tile already
+            // empty: a listener that reads the tile (a view, the future
+            // inventory dropping seeds) must not see a ghost crop.
+            CropDefinition corrupted = MakeCorruptedDef();
+            _farming.Plant(SoilA, MakeFlowerDef(stages: 2));
+            GrowToGrown(SoilA);
+            _grid.SetCorrupted(SoilA + 1, true);
+            _farming.Plant(SoilA + 1, corrupted);
+            Crop seenDuringEvent = null;
+            _farming.CropKilled += (i, _) => seenDuringEvent = _grid.GetCrop(i);
+
+            _farming.OnDawn();
+
+            Assert.That(seenDuringEvent, Is.Null,
+                "the crop must be removed from the tile before CropKilled fires");
+        }
+
         // ---------- corruption killing crops ----------
 
         [Test]
