@@ -400,6 +400,95 @@ Save the scene.
 
 Test Runner → EditMode → Run All → **106 green**.
 
+---
+
+## Feature 6 — Hunger & Health
+
+Same split: **Gus writes code and editor**; the spec is `Tests/VitalTests.cs` +
+`Tests/PlayerVitalsTests.cs`.
+
+> ⚠️ **Janhavi is working in parallel** on inventory and weather. Tell her before touching
+> `Game.unity`, make the scene changes, and push promptly to release the file.
+
+### 0. Code order (red → green)
+
+1. Skeletons so tests compile (`Scripts/Player/`, namespace `FlowersVsCorruption.Player`):
+   - `Vital.cs` — 0..Max stat: `Add`/`Subtract` (clamped, non-positive amounts are no-ops),
+     `Current`/`Max`/`Fraction01`/`IsEmpty`, `event Action<float> Changed` (only on real
+     movement), `event Action Emptied` (once per emptying, re-arms after a refill).
+   - `VitalsSettings.cs` — plain class with `MaxHunger`, `MaxHealth`, `HungerDrainPerSecond`,
+     `CorruptionDamagePerSecond`, `StarvingDamagePerSecond`, `StartingHunger`, `StartingHealth`.
+   - `PlayerVitals.cs` — `Hunger`/`Health` vitals, `event Action PlayerDied`,
+     `Tick(deltaTime, standingOnCorruption)`, `Consume(hungerRestored, healthRestored, healthDamage)`.
+2. Test Runner: ~24 new red, 108 old green → implement until **132 green**.
+3. Semantics the tests enforce: hunger drains every tick regardless of phase; corruption and
+   starvation damage **stack**; `PlayerDied` fires exactly once; after death `Tick` is frozen
+   (hunger stops too); `Consume` clamps at max and can kill via damage.
+
+### 1. Presentation
+
+- `TimeSystem`: expose `StopClock()` / `ResumeClock()` delegating to the clock (they exist on
+  `DayNightClock` but the adapter never surfaced them).
+- `PlayerVitalsController` (MonoBehaviour): serialized `GameConfig`, `WorldView`,
+  `PlayerController`, `TimeSystem`. Creates `PlayerVitals` in `Awake` and exposes it publicly —
+  **this is the hook Janhavi's inventory calls** (`vitals.Consume(...)` with the eaten crop's
+  values). `Update` ticks it with `grid.IsCorrupted(player.CurrentTileIndex)`. On `PlayerDied`:
+  stop the clock + `Debug.LogWarning`. Add a `[ContextMenu("Debug: Eat")]` to test without the
+  inventory (avoid touching `.inputactions` — Janhavi may have it open).
+- `VitalsDebugHud` (TEMP): two OnGUI bars (health red, hunger orange) with numbers,
+  bottom-left (time HUD owns top-left, farming HUD the right side).
+
+### 2. Data
+
+`GameConfig` — new `[Header("Vitals")]` section:
+
+| Field | Value | Meaning |
+| --- | --- | --- |
+| Max Hunger / Max Health | 100 / 100 | |
+| Hunger Drain Per Second | 0.6 | ~166 s to empty ≈ 1.5 cycles without eating |
+| Corruption Damage Per Second | 8 | ~12 s standing on corruption kills |
+| Starving Damage Per Second | 2 | ~50 s of agony — time to react |
+
+`CropDefinition` — new `[Header("Nutrition")]`: `HungerRestored`, `HealthRestored`, `HealthDamage`.
+
+| Asset | Hunger | Health | Damage |
+| --- | --- | --- | --- |
+| FoodCrop | 25 | 5 | 0 |
+| CorruptedCrop | 45 | 0 | 20 |
+| Flower (Sun Flower) | 5 | 10 | 0 |
+
+The flower feeds little but heals well — harvesting one is the cure, at the cost of the shield.
+
+### 3. Scene (`Game.unity`)
+
+Add `PlayerVitalsController` + `VitalsDebugHud` to the `TimeSystem` GameObject; wire the
+controller's four references and the HUD's one. Save **and push**.
+
+### 4. Verify (Play Mode)
+
+- Hunger falls always; health only while standing on purple. Step off → it stops.
+- Let hunger hit 0 → health bleeds slowly; stand on corruption too → visibly faster (stacked).
+- `Debug: Eat` → both bars rise; with corrupted-crop values hunger jumps and health drops.
+- Die → warning in the console, the time HUD freezes (clock stopped), the world stops advancing.
+
+### 5. Tests
+
+Test Runner → EditMode → Run All → **134 green**.
+
+### Addendum — review cleanups
+
+Applied during the feature-6 review:
+
+- `PlayerVitals.PlayerDied` was a public delegate **field**, so any caller could clear other
+  subscribers or fire a fake death — now a proper `event`, matching every other system.
+- `Consume` is refused once dead: food cannot revive a corpse.
+- `Tile.Crop` renamed from `crop` (properties are PascalCase); `VitalsSettings.cs` renamed to
+  match its type; private fields to `_camelCase`.
+- `FarmingSystem.Cleanse` extracted a `CleanseTile` helper — it removes the crop **before**
+  raising `CropKilled`, so listeners never observe a ghost crop on an already-cleansed tile.
+
+---
+
 ### Addendum — corrupted seed in the cycle, flowers harvestable
 
 Design change: no more auto-planting the corrupted crop on corrupted soil — the corrupted

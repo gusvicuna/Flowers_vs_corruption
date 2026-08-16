@@ -74,14 +74,14 @@ Sort into three columns from day one. This replaces a backlog: everything is bor
 | :---- | :---- | :---- |
 | A round world with different types of grounds separated in tiles. On one side the players house, on the other side the corruption base. 2D side-view tiny planet: the player walks around the circumference (gravity points to the center), tiles are arc segments of the ring. \~24 tiles to start — tile count must be trivially tunable for prototyping. House at one pole, corruption base at the opposite pole (corruption advances on two fronts). | River tiles |  |
 | Player Input (movement tangential to the surface of the world and action). Continuous walking (not tile-by-tile); the tile under the player is highlighted and Action applies to it. | Tools system |  |
-| Health system. The only stat that kills you. Drains from: standing on corrupted tiles, eating corrupted crops, and slowly while hunger is at 0\. | Fighting corruption |  |
+| Health system. The only stat that kills you. Drains continuously while standing on corrupted ground (any phase), slowly while hunger is at 0 (both stack), and in a lump when eating a corrupted crop. Eating restores some back. | Fighting corruption |  |
 | Day/Night time system |  |  |
 | Inventory system |  |  |
 | Corruption system. Spreads at nightfall: every frontier of every corrupted region advances N tiles (tunable, default 1). No tile type is immune — rocks and the house corrupt like any tile (house corrupted \= defeat). Cannot spread into a tile guarded by a living flower; pushed back by grown flowers at dawn. |  |  |
 | Planting system. Two base crops: the Flower (not edible; only when fully grown it guards its tile — each corruption attempt costs it 1 life, tunable — and cleanses both adjacent corrupted tiles at every dawn, persisting while alive) and the Food crop (edible, no protection). Growing crops need to be watered that day to gain \+1 level at dawn. Crops die when corruption enters their tile. One contextual Action button: harvest \> water \> plant the selected seed (seed cycle with Q/E — includes the corrupted seed; planting fails if the seed doesn't match the ground). Harvesting a grown flower gives up the shield in exchange for flower powder (with the inventory, powder becomes a selectable that cleanses the tile under the player). |  |  |
 | Corrupted crops. Plantable only on corrupted soil; die if their tile is cleansed. Full design: their seeds drop from crops killed by corruption (economy arrives with the inventory system). |  |  |
 | Dynamic weather system |  |  |
-| Hunger system. Refilled by manually eating a crop from the inventory. At 0 it does not kill — it slowly drains health instead. |  |  |
+| Hunger system. Drains continuously through the whole cycle; refilled by manually eating a crop from the inventory. At 0 it does not kill — it slowly drains health instead. Nutrition and damage values are authored per crop. |  |  |
 
 Jam rule: **Must-Haves should be playable start to finish well before the final week.** Everything else is a bonus.
 
